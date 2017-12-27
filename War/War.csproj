@@ -84,6 +84,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\My Assets\Scripts\BasicGroundAttacker.cs" />
     <Compile Include="Assets\My Assets\Scripts\NormalTarget.cs" />
     <Compile Include="Assets\My Assets\Scripts\PathCreator.cs" />
     <Compile Include="Assets\My Assets\Scripts\PathMover.cs" />

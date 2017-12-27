@@ -10,20 +10,27 @@ public class PathMover : MonoBehaviour {
     private Queue<Vector3> pathPoints = new Queue<Vector3>();
     private bool isNewPath;
     private SelectUnit selectUnit;
-    public int health;
-    public int damage;
+    public int health;  
     public float vision;
-    public float range;
     public float velocity;
     public PathMover enemyTarget;
+    public BasicGroundAttacker groundAttack;
 
 
+
+    private void InitStats() {
+        groundAttack = new BasicGroundAttacker(10,200f, 3);
+        health = 100;
+        //damage = 10;
+        //range = 3;
+        isNewPath = false;
+       // basicCooldownStat = 200f;
+        //basicCooldown = basicCooldownStat;
+    }
     private void Awake()
     {
-        health = 100;
-        damage = 1;
-        range = 3;
-        isNewPath = false;
+        InitStats();
+       
         navMeshAgent = GetComponent<NavMeshAgent>();
         FindObjectOfType<PathCreator>().OnNewPathCreated += SetPoints;
         selectUnit = GameObject.Find("UnitSelection").GetComponent<SelectUnit>();
@@ -44,23 +51,27 @@ public class PathMover : MonoBehaviour {
     void Update () {
         
         //check if alive
-            UpdatePathing();
+        UpdatePathing();
+        UpdateAttack();
         //    debugValue();
 
-        UpdateAttack();
+
     }
 
     private void UpdateAttack()
     {
-        //check cooldown
-        if(enemyTarget!=null&& velocity<0.5f) {
-            enemyTarget.takeDamage(damage);
+        if (groundAttack.HasCooldownElapsed())
+        {
+            if (enemyTarget != null && velocity < 0.5f)
+            {
+                enemyTarget.TakeDamage(groundAttack.damage);//to replace with polymorph
+                groundAttack.ResetBasicCooldown();
+            }
         }
-
-
+        groundAttack.UpdateBasicCooldown();
     }
 
-    private void takeDamage(int damage)
+    private void TakeDamage(int damage)
     {
         health -= damage;
     }
@@ -102,7 +113,7 @@ public class PathMover : MonoBehaviour {
     }
 
 
-    private void debugValue()
+    private void DebugValue()
     {
         SphereCollider rad = GameObject.Find("Range").GetComponent<SphereCollider>();
         GameObject rangeMarkerUI = GameObject.Find("Marker").gameObject;
@@ -122,4 +133,6 @@ public class PathMover : MonoBehaviour {
             enemyTarget = enemy.GetComponent<PathMover>();            
         }
     }
+
+    
 }
